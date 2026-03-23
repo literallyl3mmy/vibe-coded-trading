@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react'
 import { strategies, categories, categoryCounts } from './data/strategies'
 import { chartPatterns, candlePatterns, indicators, playbook } from './data/patterns'
+import { chartPatternCharts, candleCharts, indicatorCharts } from './components/Charts' // ← NEW
 
 // ════════════════════════════════════════
 // PAYOFF CHART (SVG)
@@ -177,6 +178,15 @@ function MarketPulse() {
 }
 
 // ════════════════════════════════════════
+// CHART RENDER HELPER
+// ════════════════════════════════════════
+function RenderChart({ svgType, chartMap }) {
+  if (!svgType || !chartMap[svgType]) return null
+  const C = chartMap[svgType]
+  return <C />
+}
+
+// ════════════════════════════════════════
 // APP
 // ════════════════════════════════════════
 const tabs = ['Strategies', 'Chart Patterns', 'Candlesticks', 'Indicators', 'Playbook', 'Market Pulse']
@@ -270,6 +280,7 @@ export default function App() {
             <ExpandCard key={i} header={p.name}
               badges={<><Badge text={p.signal} color={signalStyles(p.signal)} /><Badge text={p.type} />{p.reliability && <Badge text={p.reliability} color="bg-slate-700/50 text-slate-400" />}</>}>
               <div className="mt-3 space-y-2">
+                <RenderChart svgType={p.svgType} chartMap={chartPatternCharts} />
                 <p className="text-xs text-slate-300 leading-relaxed">{p.desc}</p>
                 <InfoRow label="How to trade" value={p.trade} labelColor="text-slate-400" />
                 <InfoRow label="Options play" value={p.options} labelColor="text-blue-400" />
@@ -287,6 +298,7 @@ export default function App() {
             <ExpandCard key={i} header={p.name}
               badges={<Badge text={p.signal} color={signalStyles(p.signal)} />}>
               <div className="mt-3 space-y-2">
+                <RenderChart svgType={p.svgType} chartMap={candleCharts} />
                 <p className="text-xs text-slate-300 leading-relaxed">{p.desc}</p>
                 <InfoRow label="Appears" value={p.where} labelColor="text-slate-400" />
                 <InfoRow label="Action" value={p.action} labelColor="text-blue-400" />
@@ -304,6 +316,7 @@ export default function App() {
             <ExpandCard key={i} header={ind.name}
               badges={<span className="text-[10px] text-slate-500">{ind.full}</span>}>
               <div className="mt-3 space-y-2">
+                <RenderChart svgType={ind.svgType} chartMap={indicatorCharts} />
                 <InfoRow label="What it measures" value={ind.what} labelColor="text-slate-400" />
                 <InfoRow label="How to read" value={ind.read} labelColor="text-slate-400" />
                 <InfoRow label="Options application" value={ind.options} labelColor="text-blue-400" />
